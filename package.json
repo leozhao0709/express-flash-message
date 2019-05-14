@@ -33,5 +33,9 @@
   ],
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "express",
+    "flash"
+  ]
 }
