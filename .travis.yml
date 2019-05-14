@@ -1,0 +1,19 @@
+sudo: required
+language: node_js
+node_js:
+  - 'node'
+
+notifications:
+  email:
+    recipients:
+      - zhao434@usc.edu
+    on_success: never # default: change
+    on_failure: always # default: always
+
+deploy:
+  - provider: npm
+    email: $NPM_EMAIL
+    api_key: $NPM_API_KEY
+    skip_cleanup: true
+    on:
+      tags: true
