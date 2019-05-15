@@ -13,7 +13,7 @@ yarn: `yarn add express-flash-message`
 ## usage
 
 ```ts
-var flash = require('express-flash-message');
+var { flash } = require('express-flash-message');
 var app = express();
 
 app.use(flash({ sessionKeyName: 'flashMessage' })); // if you don't provide sessionKeyName, then it will use 'flash' to store in your sessison.
