@@ -1,6 +1,6 @@
 {
   "name": "express-flash-message",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "dist/index.js",
   "repository": "https://github.com/leozhao0709/express-flash-message.git",
   "author": "lzhao <zhao434@usc.edu>",
