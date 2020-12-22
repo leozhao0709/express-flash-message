@@ -1,9 +1,3 @@
-import { Request, Response, NextFunction } from 'express';
-
-interface FlashOption {
-  sessionKeyName?: string;
-}
-
 declare global {
   namespace Express {
     interface Request {
@@ -13,23 +7,43 @@ declare global {
   }
 }
 
-export const flash = (options?: FlashOption) => (req: Request, response: Response, next: NextFunction) => {
+import { Request, Response, NextFunction } from 'express';
+
+export interface FlashOption {
+  sessionKeyName?: string;
+  useCookieSession?: boolean;
+}
+
+export const flash = (options: FlashOption = { sessionKeyName: 'flash' }) => (
+  req: Request,
+  response: Response,
+  next: NextFunction
+) => {
   if (!req.session) {
     throw new Error('no session detected!');
   }
 
-  const keyName = options ? (options.sessionKeyName ? options.sessionKeyName : 'flash') : 'flash';
+  const { sessionKeyName, useCookieSession } = options;
+
+  const keyName = sessionKeyName ?? 'flash';
 
   req.flash = (event, message) => {
     return new Promise((res, rej) => {
-      if (!req.session![keyName]) {
-        req.session![keyName] = {};
+      if (!req.session[keyName]) {
+        req.session[keyName] = {};
       }
-      if (!req.session![keyName][event]) {
-        req.session![keyName][event] = [];
+      if (!req.session[keyName][event]) {
+        req.session[keyName][event] = [];
       }
-      req.session![keyName][event].push(message);
-      req.session!.save(err => {
+      req.session[keyName][event].push(message);
+
+      if (useCookieSession) {
+        res();
+        return;
+      }
+
+      // for express-session
+      req.session.save((err) => {
         if (err) {
           return rej(err);
         }
@@ -38,14 +52,21 @@ export const flash = (options?: FlashOption) => (req: Request, response: Respons
     });
   };
 
-  req.consumeFlash = event => {
+  req.consumeFlash = (event) => {
     return new Promise((res, rej) => {
       let messages: string[] = [];
-      if (req.session![keyName] && req.session![keyName][event]) {
-        messages = [...req.session![keyName][event]];
+      if (req.session[keyName] && req.session[keyName][event]) {
+        messages = [...req.session[keyName][event]];
         req.session![keyName] = null;
       }
-      req.session!.save(err => {
+
+      if (useCookieSession) {
+        res(messages);
+        return;
+      }
+
+      // for express-session
+      req.session.save((err) => {
         if (err) {
           return rej(err);
         }
