@@ -1,6 +1,6 @@
 {
   "name": "express-flash-message",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "main": "dist/index.js",
   "repository": "https://github.com/leozhao0709/express-flash-message.git",
   "author": "Lei Zhao <lei.zhao@coupa.com>",
@@ -37,7 +37,6 @@
     "clean": "rm -rf node_modules dist coverage yarn.lock",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "prepublishOnly": "yarn lint && yarn test && yarn build",
-    "preversion": "yarn lint && yarn test",
     "postversion": "git push && git push --tags"
   },
   "files": [
