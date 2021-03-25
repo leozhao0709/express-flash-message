@@ -57,7 +57,7 @@ export const flash = (options: FlashOption = { sessionKeyName: 'flash' }) => (
       let messages: string[] = [];
       if (req.session[keyName] && req.session[keyName][event]) {
         messages = [...req.session[keyName][event]];
-        req.session![keyName] = null;
+        delete req.session![keyName][event];
       }
 
       if (useCookieSession) {
