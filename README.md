@@ -56,7 +56,7 @@ app.listen(port, () => {
 });
 ```
 
-If you are using `cookie-session`, please sepecify it with `useCookieSession`:
+**If you are using [cookie-session](https://github.com/expressjs/cookie-session), please sepecify it with** `useCookieSession` option:
 
 ```js
 app.use(flash({ sessionKeyName: 'flashMessage', useCookieSession: true }));
