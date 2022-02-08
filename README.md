@@ -78,11 +78,11 @@ Note:
 
 - This middleware must be used **after** `express-session` or `cookie-session` middleware.
 
-- `req.flash` and `req.consumeFlash` returns a **Promise**. We saw several other flash packages are not using async process to deal with flash message, then if user refresh page really quickly, it will have trouble to consume the flash message. This package is mainly to fix that issue.
+- `req.flash` and `req.consumeFlash` returns a **Promise**. We saw several other flash packages are not using async process to deal with flash message, then if the user refresh page really quickly, it will have trouble consuming the flash message. This package is mainly to fix that issue.
 
-- the flash message is an **array**. You can use `await req.flash('key', 'value')` several times and all the value will be stored to the `key`. Then when you call `await req.consumeFlash('key')`, it will give you an **array** which contains all the value you want to flash.
+- The flash message is an **array**. You can use `await req.flash('key', 'value')` several times and all the value will be stored in the `key`. Then when you call `await req.consumeFlash('key')`, it will give you an **array** which contains all the values you want to flash.
 
-- The Falsh message will be **set to null** after you call `await req.consumeFlash('key')` from session which means it will be removed from your session.
+- The Flash message will be **set to null** after you call `await req.consumeFlash('key')` from session which means it will be removed from your session.
 
 ## License
 
