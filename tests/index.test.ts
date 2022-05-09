@@ -43,9 +43,9 @@ describe('flash', () => {
   it('should only consume the responding event key and keep the other key message', async () => {
     const req = { session: {} } as Request;
     const flashEvent1 = 'event1';
-    const flashMsg1 = 'Event1 Message!';
+    const flashMsg1 = 'Event1 Message';
     const flashEvent2 = 'event2';
-    const flashMsg2 = 'Event2 Message!';
+    const flashMsg2 = 'Event2 Message';
 
     flash(flashOption)(req, res, next);
     await req.flash(flashEvent1, flashMsg1);
