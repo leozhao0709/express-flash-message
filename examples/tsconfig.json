@@ -14,9 +14,7 @@
     // Note: In order to transform *both* js and d.ts files, you need to add both of the below lines to plugins
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
-  // "references": [
-  //   { "path": "../../otherProject/tsconfig.build.json" }
-  // ], // reference is not inherited: https://github.com/microsoft/TypeScript/issues/27098, remember also adding the reference project to nodemon watch config
+  "references": [{ "path": "../tsconfig.build.json" }], // reference is not inherited: https://github.com/microsoft/TypeScript/issues/27098, remember also adding the reference project to nodemon watch config
   "include": ["src", "tests"],
   "ts-node": {
     "esm": true,

@@ -6,5 +6,5 @@
   "ignore": [
     "src/**/*.spec.ts"
   ],
-  "exec": "ts-node ./src/index.ts"
+  "exec": "tsc -b tsconfig.build.json && tsc-alias && node --enable-source-maps dist/index.js"
 }
