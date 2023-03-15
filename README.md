@@ -1,8 +1,8 @@
-# express-flash-message
+# express-flash-message v3
 
 Provides Express.js flash message middleware that work for rendering or redirecting.
 
-**Requires [express-sessions](https://www.npmjs.com/package/express-session) or [cookie-session](https://github.com/expressjs/cookie-session) middleware before apply this middleware.**
+In v3, there is no session needed! If you are using v2 version, check doc [here](./READMEV2.md)
 
 ## installation
 
@@ -10,63 +10,54 @@ npm: `npm install --save express-flash-message`
 
 yarn: `yarn add express-flash-message`
 
-Note: if you don't install [express-session](https://www.npmjs.com/package/express-session) **or** [cookie-session](https://github.com/expressjs/cookie-session) before, then you also need install these dependency.
+pnpm: `pnpm add express-flash-message`
 
 ## usage
 
+You can go to [example](./examples) folder to run the following example.
+
 ```ts
-const express = require('express');
-const session = require('express-session');
-const path = require('path');
-const { flash } = require('express-flash-message');
+import express from 'express';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import nunjucks from 'nunjucks';
+import flash from 'express-flash-message';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
-const port = 3000;
 
-// express-session
-app.use(
-  session({
-    secret: 'secret',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-      // secure: true, // becareful set this option, check here: https://www.npmjs.com/package/express-session#cookiesecure. In local, if you set this to true, you won't receive flash as you are using `http` in local, but http is not secure
-    },
-  })
-);
+app.engine('njk', nunjucks.render);
+app.set('view engine', 'njk');
+nunjucks.configure(path.resolve(__dirname, '../views'), {
+  autoescape: true,
+  express: app,
+});
 
-// apply express-flash-message middleware
-app.use(flash({ sessionKeyName: 'flashMessage' }));
+app.use(flash());
 
-app.get('/flash', async function (req, res) {
-  // Set a flash message by passing the key, followed by the value, to req.flash().
-  await req.flash('info', 'Flash is back!');
+app.get('/flash', (req, res) => {
+  res.flash('success', 'this is info flash message');
+  res.flash('success', 'this is info flash message2');
   res.redirect('/');
 });
 
-app.get('/', async function (req, res) {
-  // Get an array of flash message by passing the key to req.consumeFlash()
-  const messages = await req.consumeFlash('info');
-  res.render('index', { messages });
+app.get('/', (req, res) => {
+  res.flash('success', '-----info----');
+  res.render('index');
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+app.listen('5000', () => {
+  console.log('app start at http://localhost:5000');
 });
 ```
 
-**If you are using [cookie-session](https://github.com/expressjs/cookie-session), please sepecify it with** `useCookieSession` option:
-
-```js
-app.use(flash({ sessionKeyName: 'flashMessage', useCookieSession: true }));
-```
-
-Then in your template, you can consume the flash messages. **But please remember the messages is an array.**
+Then in your template, you can consume the flash messages by calling `getFlashMessage(type)`. **But please remember the messages is an array.**
 
 ```html
 <ul>
-  {% for msg in messages %}
+  {% for msg in getFlashMessages('success') %}
   <li>{{msg}}</li>
   {% endfor %}
 </ul>
@@ -76,13 +67,9 @@ Note the example above is using [nunjuck](https://mozilla.github.io/nunjucks/) e
 
 Note:
 
-- This middleware must be used **after** `express-session` or `cookie-session` middleware.
+- The flash message is an **array**. You can use `res.flash('type', 'value')` several times and all the value will be stored in the `key`. Then when you call `getFlashMessages('type')` in your template directly, it will give you an **array** which contains all the values you want to flash.
 
-- `req.flash` and `req.consumeFlash` returns a **Promise**. We saw several other flash packages are not using async process to deal with flash message, then if the user refresh page really quickly, it will have trouble consuming the flash message. This package is mainly to fix that issue.
-
-- The flash message is an **array**. You can use `await req.flash('key', 'value')` several times and all the value will be stored in the `key`. Then when you call `await req.consumeFlash('key')`, it will give you an **array** which contains all the values you want to flash.
-
-- The Flash message will be **set to null** after you call `await req.consumeFlash('key')` from session which means it will be removed from your session.
+- The Flash message will be **consumed** after you call `getFlashMessages('type')`.
 
 ## License
 
