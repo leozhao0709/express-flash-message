@@ -71,6 +71,8 @@ Note:
 
 - The Flash message will be **consumed** after you call `getFlashMessages('type')`.
 
+- The package is build with typescript, so if you are using CommonJS and need `require` import, then you have to require it this way: `const flash = require('express-flash-message').default;`
+
 ## License
 
 [MIT](./LICENSE)

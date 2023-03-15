@@ -1,7 +1,9 @@
 {
   "name": "express-flash-message",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "",
+  "repository": "https://github.com/leozhao0709/express-flash-message.git",
+  "author": "Lei Zhao <leo.zhao.real@gmail.com>",
   "exports": {
     ".": {
       "require": "./dist/cjs/index.js",
@@ -23,8 +25,6 @@
     "lint": "eslint {src,tests} --ext .js,.jsx,.ts,.tsx",
     "lintStaged": "lint-staged --config .lint-staged.config.cjs",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build",
-    "preversion": "pnpm lint && pnpm test",
-    "postversion": "git push && git push --tags",
     "prepare": "husky install",
     "start:dev": "nodemon",
     "start:debug": "nodemon --inspect-brk"
@@ -35,7 +35,6 @@
     "messages",
     "flash messages"
   ],
-  "author": "",
   "license": "MIT",
   "devDependencies": {
     "@types/express": "^4.17.17",
@@ -61,7 +60,6 @@
     "typescript-plugin-css-modules": "^4.2.3"
   },
   "peerDependencies": {
-    "@types/express": "^4.17.17",
     "express": "^4.18.2"
   },
   "dependencies": {},
