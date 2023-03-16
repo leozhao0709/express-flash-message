@@ -1,6 +1,6 @@
 {
   "name": "express-flash-message",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "",
   "repository": "https://github.com/leozhao0709/express-flash-message.git",
   "author": "Lei Zhao <leo.zhao.real@gmail.com>",
@@ -37,12 +37,15 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@types/cookie-session": "^2.0.44",
     "@types/express": "^4.17.17",
+    "@types/express-session": "^1.17.6",
     "@types/jest": "^29.4.0",
     "@types/lodash-es": "^4.17.6",
     "@types/node": "^18.15.1",
     "@typescript-eslint/eslint-plugin": "^5.54.1",
     "@typescript-eslint/parser": "^5.54.1",
+    "cookie-session": "^2.0.0",
     "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.7.0",
     "eslint-plugin-import": "^2.27.5",
@@ -62,7 +65,6 @@
   "peerDependencies": {
     "express": "^4.18.2"
   },
-  "dependencies": {},
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*"

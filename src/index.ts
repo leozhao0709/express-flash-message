@@ -13,30 +13,55 @@ type OnConsumeFlash = (type: string, messages: string[]) => void;
 type onAddFlash = (type: string, message: string) => void;
 
 export interface FlashOption {
+  sessionKeyName: string;
   onAddFlash?: onAddFlash;
   onConsumeFlash?: OnConsumeFlash;
 }
 
-const flashCache = new Map<string, string[]>();
-
 export const getFlashMessages = (
+  req: Request,
+  sessionKeyName: string,
   type: string,
   onConsumeFlash?: OnConsumeFlash
 ) => {
-  const flashMessages = flashCache.get(type) || [];
+  if (
+    req.session[sessionKeyName] === undefined ||
+    req.session[sessionKeyName][type] === undefined
+  ) {
+    onConsumeFlash?.(type, []);
+    return [];
+  }
+  const flashMessages = req.session[sessionKeyName][type];
+  req.session[sessionKeyName];
+  delete req.session[sessionKeyName][type];
   onConsumeFlash?.(type, flashMessages);
-  flashCache.delete(type);
   return flashMessages;
 };
 
-const expressFlashMessage = (option: FlashOption = {}) => {
+const expressFlashMessage = (option: FlashOption) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const { onAddFlash, onConsumeFlash } = option;
+    const { onAddFlash, onConsumeFlash, sessionKeyName } = option;
+    if (sessionKeyName === undefined) {
+      throw new Error(
+        'You must provide a session key name for express flash messages'
+      );
+    }
+
+    if (req.session === undefined) {
+      throw new Error(
+        'Request cannot find session, please make sure you install express-session or cookie-session first'
+      );
+    }
+
     res.flash = (type: string, message: string) => {
-      if (!flashCache.has(type)) {
-        flashCache.set(type, []);
+      if (req.session[sessionKeyName] === undefined) {
+        req.session[sessionKeyName] = {};
       }
-      flashCache.get(type)?.push(message);
+
+      if (req.session[sessionKeyName][type] === undefined) {
+        req.session[sessionKeyName][type] = [];
+      }
+      req.session[sessionKeyName][type].push(message);
       onAddFlash?.(type, message);
     };
 
@@ -51,7 +76,7 @@ const expressFlashMessage = (option: FlashOption = {}) => {
         {
           ...data,
           getFlashMessages: (type: string) =>
-            getFlashMessages(type, onConsumeFlash),
+            getFlashMessages(req, sessionKeyName, type, onConsumeFlash),
         },
         callback
       );

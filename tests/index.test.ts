@@ -5,11 +5,13 @@ describe('flash', () => {
   const onAddFlash = jest.fn();
   const onConsumeFlash = jest.fn();
 
-  const req = {} as Request;
+  const req = { session: {} } as Request;
   const res = {} as Response;
+  const sessionKeyName = 'express-flash-message';
   res.render = jest.fn();
 
   const flashOption: FlashOption = {
+    sessionKeyName,
     onAddFlash,
     onConsumeFlash,
   };
@@ -26,11 +28,18 @@ describe('flash', () => {
 
     flash(flashOption)(req, res, next);
     res.flash(flashEvent, flashMsg);
-    const messages = getFlashMessages(flashEvent, onConsumeFlash);
+    const messages = getFlashMessages(
+      req,
+      sessionKeyName,
+      flashEvent,
+      onConsumeFlash
+    );
     expect(messages.length).toBe(1);
     expect(messages).toContain(flashMsg);
     expect(onConsumeFlash).toHaveBeenCalled();
-    expect(getFlashMessages(flashEvent).length).toBe(0);
+    expect(
+      getFlashMessages(req, sessionKeyName, flashEvent, onConsumeFlash).length
+    ).toBe(0);
   });
 
   it('should consume several flash message at the same time when store several flash in the same event key', async () => {
@@ -41,11 +50,18 @@ describe('flash', () => {
     flash(flashOption)(req, res, next);
     res.flash(flashEvent, flashMsg1);
     res.flash(flashEvent, flashMsg2);
-    const messages = getFlashMessages(flashEvent, onConsumeFlash);
+    const messages = getFlashMessages(
+      req,
+      sessionKeyName,
+      flashEvent,
+      onConsumeFlash
+    );
     expect(messages.length).toBe(2);
     expect(messages).toContain(flashMsg1);
     expect(messages).toContain(flashMsg2);
-    expect(getFlashMessages(flashEvent).length).toBe(0);
+    expect(
+      getFlashMessages(req, sessionKeyName, flashEvent, onConsumeFlash).length
+    ).toBe(0);
   });
 
   it('should only consume the responding event key and keep the other key message', async () => {
@@ -58,14 +74,28 @@ describe('flash', () => {
     res.flash(flashEvent1, flashMsg1);
     res.flash(flashEvent2, flashMsg2);
 
-    let messages = getFlashMessages(flashEvent1);
+    let messages = getFlashMessages(
+      req,
+      sessionKeyName,
+      flashEvent1,
+      onConsumeFlash
+    );
     expect(messages).toContain(flashMsg1);
     expect(messages.length).toBe(1);
-    expect(getFlashMessages(flashEvent1).length).toBe(0);
+    expect(
+      getFlashMessages(req, sessionKeyName, flashEvent1, onConsumeFlash).length
+    ).toBe(0);
 
-    messages = getFlashMessages(flashEvent2);
+    messages = getFlashMessages(
+      req,
+      sessionKeyName,
+      flashEvent2,
+      onConsumeFlash
+    );
     expect(messages).toContain(flashMsg2);
     expect(messages.length).toBe(1);
-    expect(getFlashMessages(flashEvent2).length).toBe(0);
+    expect(
+      getFlashMessages(req, sessionKeyName, flashEvent2, onConsumeFlash).length
+    ).toBe(0);
   });
 });
